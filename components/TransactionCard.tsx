@@ -23,12 +23,14 @@ const TransactionCard: React.FC<Props> = ({ transaction, index, onDelete }) => {
 
   return (
     <motion.div 
+      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
-      className="group flex items-center justify-between p-4 rounded-xl bg-vamela-surface border border-white/5 hover:border-white/10 transition-colors cursor-default relative"
+      exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+      transition={{ duration: 0.2 }}
+      className="group flex items-center justify-between p-4 rounded-xl bg-vamela-surface border border-white/5 hover:border-white/10 transition-colors cursor-default relative overflow-hidden"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 relative z-10">
         <div className={`p-2.5 rounded-full border border-white/5 ${
           isIncome 
             ? 'bg-emerald-500/10 text-emerald-500' 
@@ -48,7 +50,7 @@ const TransactionCard: React.FC<Props> = ({ transaction, index, onDelete }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 relative z-20">
         <span className={`text-sm font-mono font-medium tracking-tight ${
           isIncome 
             ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]' 
@@ -60,11 +62,12 @@ const TransactionCard: React.FC<Props> = ({ transaction, index, onDelete }) => {
         {onDelete && (
           <button 
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // Stop event bubbling
               onDelete(transaction.id);
             }}
-            className="opacity-0 group-hover:opacity-100 p-2 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
+            className="opacity-100 md:opacity-0 group-hover:opacity-100 p-2 -mr-2 text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all active:scale-90 cursor-pointer"
             title="Delete transaction"
+            aria-label="Delete transaction"
           >
             <Trash2 size={16} />
           </button>
