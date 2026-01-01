@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CornerDownLeft, X } from 'lucide-react';
+import { CornerDownLeft, X, ArrowUp } from 'lucide-react';
 import { Transaction } from '../types';
 
 interface Props {
@@ -38,8 +38,8 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
 
     onAdd({
       amount: parseFloat(amount),
-      description: description || (type === 'income' ? 'Income' : 'Expense'),
-      category: 'Uncategorized', // Simplified for now
+      description: description || (type === 'income' ? 'Einkommen' : 'Ausgabe'),
+      category: 'Allgemein', 
       type: type,
     });
   };
@@ -49,7 +49,7 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
   return (
     <AnimatePresence>
         {/* Backdrop */}
-        <div className="fixed inset-0 z-50 flex items-end md:items-start justify-center md:pt-[20vh] px-0 md:px-4">
+        <div className="fixed inset-0 z-[60] flex items-end md:items-start justify-center md:pt-[20vh] px-0 md:px-4">
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
@@ -63,20 +63,20 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
             className="relative w-full md:max-w-lg bg-[#0F0F10] border-t md:border border-zinc-800 rounded-t-3xl md:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
             <form onSubmit={handleSubmit} className="flex flex-col h-full md:h-auto pb-8 md:pb-0">
               
               {/* Drag Handle for mobile visual cue */}
-              <div className="md:hidden w-full flex justify-center pt-3 pb-1">
+              <div className="md:hidden w-full flex justify-center pt-3 pb-1" onClick={onClose}>
                 <div className="w-12 h-1.5 rounded-full bg-zinc-800" />
               </div>
 
               {/* Header */}
               <div className="px-6 pt-4 pb-2 md:py-3 border-b border-transparent md:border-white/5 flex items-center justify-between md:bg-zinc-900/50">
-                <span className="hidden md:block text-xs font-medium text-zinc-500 uppercase tracking-wider">Add Transaction</span>
-                <span className="md:hidden text-lg font-medium text-white">New Transaction</span>
+                <span className="hidden md:block text-xs font-medium text-zinc-500 uppercase tracking-wider">Neue Transaktion</span>
+                <span className="md:hidden text-lg font-medium text-white">Neue Buchung</span>
                 
                 <button 
                   type="button" 
@@ -93,14 +93,14 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
                     onClick={() => setType('expense')}
                     className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${type === 'expense' ? 'bg-zinc-700 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
-                    Expense
+                    Ausgabe
                   </button>
                   <button 
                     type="button"
                     onClick={() => setType('income')}
                     className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${type === 'income' ? 'bg-emerald-600 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
-                    Income
+                    Einnahme
                   </button>
                 </div>
               </div>
@@ -113,14 +113,14 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
                     onClick={() => setType('expense')}
                     className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${type === 'expense' ? 'bg-zinc-800 text-white shadow-lg shadow-black/20' : 'text-zinc-500'}`}
                   >
-                    Expense
+                    Ausgabe
                   </button>
                   <button 
                     type="button"
                     onClick={() => setType('income')}
                     className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${type === 'income' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-zinc-500'}`}
                   >
-                    Income
+                    Einnahme
                   </button>
                 </div>
               </div>
@@ -136,7 +136,8 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
                   placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="bg-transparent border-none outline-none text-7xl md:text-5xl font-semibold text-white placeholder-zinc-800 w-full text-center caret-blue-500 p-0 m-0"
+                  className="bg-transparent border-none outline-none text-7xl md:text-5xl font-semibold text-white placeholder-zinc-800 w-full text-center caret-blue-500 p-0 m-0 appearance-none"
+                  style={{ MozAppearance: 'textfield' }} 
                 />
               </div>
 
@@ -145,7 +146,7 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
                 <div className="relative">
                   <input 
                     type="text"
-                    placeholder="What was this for?"
+                    placeholder="Wofür war das?"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="w-full bg-zinc-900/50 border border-zinc-800/50 focus:border-zinc-700 rounded-2xl px-5 py-4 text-lg text-zinc-300 placeholder-zinc-600 outline-none transition-all"
@@ -164,20 +165,21 @@ const CommandMenu: React.FC<Props> = ({ isOpen, onClose, onAdd }) => {
 
               {/* Mobile Submit Button */}
               <div className="md:hidden px-6 pt-2">
-                <button
+                <motion.button
                   type="submit"
                   disabled={!amount}
-                  className={`w-full py-4 rounded-2xl text-lg font-medium text-white transition-all active:scale-95 flex items-center justify-center gap-2 ${
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-full py-4 rounded-2xl text-lg font-medium text-white transition-all flex items-center justify-center gap-2 ${
                     amount ? (type === 'income' ? 'bg-emerald-600 shadow-lg shadow-emerald-900/20' : 'bg-blue-600 shadow-lg shadow-blue-900/20') : 'bg-zinc-800 text-zinc-500'
                   }`}
                 >
-                  Save Transaction
-                </button>
+                  Speichern
+                </motion.button>
               </div>
 
               {/* Footer Hints (Desktop Only) */}
               <div className="hidden md:flex px-4 py-2 items-center justify-between text-[10px] text-zinc-600 border-t border-white/5 bg-zinc-900/30">
-                 <span>Press <span className="font-mono text-zinc-400">ENTER</span> to save</span>
+                 <span><span className="font-mono text-zinc-400">ENTER</span> zum speichern</span>
                  <span className="font-mono">VAMELA</span>
               </div>
             </form>

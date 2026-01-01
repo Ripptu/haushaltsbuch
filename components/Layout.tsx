@@ -1,6 +1,7 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronUp } from 'lucide-react';
 import { View } from '../types';
+import { motion, useAnimation } from 'framer-motion';
 
 interface Props {
   children: React.ReactNode;
@@ -10,7 +11,8 @@ interface Props {
 }
 
 const Layout: React.FC<Props> = ({ children, onOpenCmd, currentView, onChangeView }) => {
-  
+  const controls = useAnimation();
+
   const getLinkClass = (view: View) => {
     const isActive = currentView === view;
     return `cursor-pointer transition-colors ${
@@ -19,10 +21,10 @@ const Layout: React.FC<Props> = ({ children, onOpenCmd, currentView, onChangeVie
   };
 
   return (
-    <div className="min-h-screen bg-vamela-bg text-zinc-200 font-sans selection:bg-zinc-800 pb-20 md:pb-0">
+    <div className="min-h-screen bg-vamela-bg text-zinc-200 font-sans selection:bg-zinc-800 pb-32 md:pb-0 relative overflow-x-hidden">
       
       {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-40 backdrop-blur-md border-b border-white/5 bg-black/50">
+      <nav className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/5 bg-black/40">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           
           {/* Logo */}
@@ -41,19 +43,19 @@ const Layout: React.FC<Props> = ({ children, onOpenCmd, currentView, onChangeVie
                 onClick={() => onChangeView('dashboard')} 
                 className={getLinkClass('dashboard')}
               >
-                Dashboard
+                Übersicht
               </button>
               <button 
                 onClick={() => onChangeView('history')} 
                 className={getLinkClass('history')}
               >
-                History
+                Historie
               </button>
               <button 
                 onClick={() => onChangeView('settings')} 
                 className={getLinkClass('settings')}
               >
-                Settings
+                Einstellungen
               </button>
             </div>
           </div>
@@ -66,29 +68,49 @@ const Layout: React.FC<Props> = ({ children, onOpenCmd, currentView, onChangeVie
               className="group flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black hover:bg-zinc-200 transition-all font-medium text-sm"
             >
               <Plus size={16} strokeWidth={3} className="group-hover:rotate-90 transition-transform" />
-              <span>Add New</span>
+              <span>Neu</span>
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="relative z-0">
+      {/* Main Content - Added explicit z-index and relative positioning to fix mobile overlay issues */}
+      <main className="relative z-10">
         {children}
       </main>
 
-      {/* Mobile Floating Action Button */}
-      <div className="md:hidden fixed bottom-6 right-6 z-30">
-        <button
-          onClick={onOpenCmd}
-          className="h-14 w-14 rounded-full bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center active:scale-90 transition-all"
+      {/* Mobile Swipe Up Action Zone */}
+      <div className="md:hidden fixed bottom-0 left-0 w-full z-50 h-24 flex items-end justify-center pointer-events-none">
+        {/* Actual Interactable Area */}
+        <motion.div
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(e, info) => {
+            if (info.offset.y < -40) {
+              onOpenCmd();
+            }
+          }}
+          className="pointer-events-auto w-full h-20 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-col items-center justify-end pb-6 cursor-grab active:cursor-grabbing"
         >
-          <Plus size={28} strokeWidth={2.5} />
-        </button>
+          <motion.div 
+             animate={{ y: [0, -5, 0] }}
+             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+             className="flex flex-col items-center gap-2"
+          >
+            <div className="w-12 h-1.5 rounded-full bg-zinc-700/50 backdrop-blur-md border border-white/10" />
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-medium flex items-center gap-1">
+              <ChevronUp size={10} /> Swipe für Neu
+            </span>
+          </motion.div>
+        </motion.div>
       </div>
 
+      {/* Mobile Floating Action Button (Alternative/Fallback) - Hidden now in favor of swipe, 
+          but can keep as a visual anchor if needed. Let's remove to enforce swipe. */}
+
       {/* Floating Gradient Background Ambient */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[50%] -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-blue-600 blur-[120px] opacity-[0.08]" />
         <div className="absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] rounded-full bg-emerald-600/10 blur-[100px]" />
       </div>

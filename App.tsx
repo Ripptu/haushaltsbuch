@@ -89,7 +89,7 @@ const App: React.FC = () => {
   };
 
   const handleResetData = () => {
-    if (window.confirm('Are you sure you want to delete all data and reset to defaults?')) {
+    if (window.confirm('Möchtest du wirklich alle Daten löschen und zurücksetzen?')) {
       const defaults = generateMockTransactions();
       setTransactions(defaults);
       setCurrentView('dashboard');
@@ -128,7 +128,7 @@ const App: React.FC = () => {
       {/* Undo Toast Notification */}
       <AnimatePresence>
         {showUndo && (
-          <div className="fixed bottom-24 md:bottom-8 left-0 right-0 flex justify-center z-50 pointer-events-none">
+          <div className="fixed bottom-32 md:bottom-8 left-0 right-0 flex justify-center z-[100] pointer-events-none">
             <motion.div 
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -137,7 +137,7 @@ const App: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-emerald-500" />
-                <span className="text-sm font-medium">Transaction deleted</span>
+                <span className="text-sm font-medium">Gelöscht</span>
               </div>
               <div className="flex-1" />
               <button 
@@ -145,7 +145,7 @@ const App: React.FC = () => {
                 className="px-3 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1.5"
               >
                 <RotateCcw size={12} />
-                Undo
+                Rückgängig
               </button>
               <button 
                 onClick={() => setShowUndo(false)}

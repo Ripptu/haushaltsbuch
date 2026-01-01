@@ -18,7 +18,7 @@ const History: React.FC<Props> = ({ transactions, onDelete }) => {
     
     sorted.forEach(t => {
       const date = new Date(t.created_at);
-      const key = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+      const key = date.toLocaleString('de-DE', { month: 'long', year: 'numeric' });
       if (!groups[key]) groups[key] = [];
       groups[key].push(t);
     });
@@ -26,7 +26,7 @@ const History: React.FC<Props> = ({ transactions, onDelete }) => {
   }, [transactions]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen">
+    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-8 min-h-screen">
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -34,7 +34,7 @@ const History: React.FC<Props> = ({ transactions, onDelete }) => {
       >
         <h2 className="text-2xl font-light text-white flex items-center gap-3">
           <Calendar className="text-zinc-600" size={24} />
-          Transaction History
+          Verlauf
         </h2>
         <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 text-sm hover:text-white hover:border-zinc-700 transition-colors">
           <Filter size={14} />
@@ -56,7 +56,7 @@ const History: React.FC<Props> = ({ transactions, onDelete }) => {
                   {month}
                 </h3>
                 <span className="text-xs font-mono text-zinc-600">
-                  {(txs as Transaction[]).length} transactions
+                  {(txs as Transaction[]).length} Buchungen
                 </span>
              </div>
              <div className="grid gap-3">
@@ -68,7 +68,7 @@ const History: React.FC<Props> = ({ transactions, onDelete }) => {
         ))}
         {transactions.length === 0 && (
           <div className="text-center py-20 text-zinc-500">
-            No transactions found. Start by adding one with CMD+K.
+            Keine Transaktionen gefunden. Swipe nach oben, um zu beginnen.
           </div>
         )}
       </div>
