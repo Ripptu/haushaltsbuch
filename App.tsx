@@ -54,6 +54,12 @@ const App: React.FC = () => {
     setIsCmdOpen(false);
   };
 
+  const handleDeleteTransaction = (id: string) => {
+    if (window.confirm('Delete this transaction?')) {
+      setTransactions(prev => prev.filter(t => t.id !== id));
+    }
+  };
+
   const handleResetData = () => {
     if (window.confirm('Are you sure you want to delete all data and reset to defaults?')) {
       const defaults = generateMockTransactions();
@@ -66,13 +72,13 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard transactions={transactions} />;
+        return <Dashboard transactions={transactions} onDelete={handleDeleteTransaction} />;
       case 'history':
-        return <History transactions={transactions} />;
+        return <History transactions={transactions} onDelete={handleDeleteTransaction} />;
       case 'settings':
         return <Settings onReset={handleResetData} />;
       default:
-        return <Dashboard transactions={transactions} />;
+        return <Dashboard transactions={transactions} onDelete={handleDeleteTransaction} />;
     }
   };
 

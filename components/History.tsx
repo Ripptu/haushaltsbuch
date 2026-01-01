@@ -6,9 +6,10 @@ import { motion } from 'framer-motion';
 
 interface Props {
   transactions: Transaction[];
+  onDelete: (id: string) => void;
 }
 
-const History: React.FC<Props> = ({ transactions }) => {
+const History: React.FC<Props> = ({ transactions, onDelete }) => {
   // Group by month
   const grouped = useMemo(() => {
     const groups: Record<string, Transaction[]> = {};
@@ -60,7 +61,7 @@ const History: React.FC<Props> = ({ transactions }) => {
              </div>
              <div className="grid gap-3">
                {(txs as Transaction[]).map((t, idx) => (
-                 <TransactionCard key={t.id} transaction={t} index={idx} />
+                 <TransactionCard key={t.id} transaction={t} index={idx} onDelete={onDelete} />
                ))}
              </div>
           </motion.div>

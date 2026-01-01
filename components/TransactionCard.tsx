@@ -1,14 +1,15 @@
 import React from 'react';
 import { Transaction } from '../types';
-import { ArrowUpRight, ArrowDownLeft, ShoppingBag, Briefcase, Zap, Monitor } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, ShoppingBag, Briefcase, Zap, Monitor, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Props {
   transaction: Transaction;
   index: number;
+  onDelete?: (id: string) => void;
 }
 
-const TransactionCard: React.FC<Props> = ({ transaction, index }) => {
+const TransactionCard: React.FC<Props> = ({ transaction, index, onDelete }) => {
   const isIncome = transaction.type === 'income';
   
   const getIcon = (category: string) => {
@@ -25,7 +26,7 @@ const TransactionCard: React.FC<Props> = ({ transaction, index }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      className="group flex items-center justify-between p-4 rounded-xl bg-vamela-surface border border-white/5 hover:border-white/10 transition-colors cursor-default"
+      className="group flex items-center justify-between p-4 rounded-xl bg-vamela-surface border border-white/5 hover:border-white/10 transition-colors cursor-default relative"
     >
       <div className="flex items-center gap-4">
         <div className={`p-2.5 rounded-full border border-white/5 ${
@@ -47,7 +48,7 @@ const TransactionCard: React.FC<Props> = ({ transaction, index }) => {
         </div>
       </div>
 
-      <div className="flex flex-col items-end">
+      <div className="flex items-center gap-4">
         <span className={`text-sm font-mono font-medium tracking-tight ${
           isIncome 
             ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]' 
@@ -55,6 +56,19 @@ const TransactionCard: React.FC<Props> = ({ transaction, index }) => {
         }`}>
           {isIncome ? '+' : '-'}${transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </span>
+        
+        {onDelete && (
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(transaction.id);
+            }}
+            className="opacity-0 group-hover:opacity-100 p-2 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
+            title="Delete transaction"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
     </motion.div>
   );

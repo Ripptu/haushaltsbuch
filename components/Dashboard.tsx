@@ -7,11 +7,12 @@ import { Transaction } from '../types';
 
 interface Props {
   transactions: Transaction[];
+  onDelete: (id: string) => void;
 }
 
 type TimeRange = 'all' | 'month';
 
-const Dashboard: React.FC<Props> = ({ transactions }) => {
+const Dashboard: React.FC<Props> = ({ transactions, onDelete }) => {
   const [timeRange, setTimeRange] = useState<TimeRange>('all');
   
   // Filter Transactions based on Time Range
@@ -189,7 +190,7 @@ const Dashboard: React.FC<Props> = ({ transactions }) => {
           
           <div className="grid gap-3">
             {filteredTransactions.slice(0, 10).map((t, idx) => (
-              <TransactionCard key={t.id} transaction={t} index={idx} />
+              <TransactionCard key={t.id} transaction={t} index={idx} onDelete={onDelete} />
             ))}
             {filteredTransactions.length === 0 && (
               <div className="p-8 text-center text-zinc-600 text-sm border border-dashed border-zinc-800 rounded-xl">
